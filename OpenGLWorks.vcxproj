@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\Libraries\glfw3_x64-windows\include;$(ProjectDir)\Libraries\glew_x64-windows\include;$(ProjectDir)\Libraries\freeglut_x64-windows\include;$(ProjectDir)\Libraries\glad_x64-windows\include;$(ProjectDir)\Libraries\egl-registry_x64-windows\include;$(ProjectDir)\Libraries\stb\include\</IncludePath>
+    <IncludePath>$(ProjectDir)\Libraries\glfw3_x64-windows\include;$(ProjectDir)\Libraries\glew_x64-windows\include;$(ProjectDir)\Libraries\freeglut_x64-windows\include;$(ProjectDir)\Libraries\glad_x64-windows\include;$(ProjectDir)\Libraries\egl-registry_x64-windows\include;$(ProjectDir)\Libraries\stb\include;$(ProjectDir)\Libraries\glm_x64-windows\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -178,6 +178,7 @@
     <ClInclude Include="VBO.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="brick.png" />
     <Image Include="UkraineTexture.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
