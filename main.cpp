@@ -74,6 +74,7 @@ int main(int argc, char* argv[])
 
     // Texture
     int widthImg, heightImg, numColCh;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char* bytes = stbi_load("UkraineTexture.jpg", &widthImg, &heightImg, &numColCh, 0);
 
     GLuint textures;
