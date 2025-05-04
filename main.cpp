@@ -9,6 +9,7 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "VAO.h"
+#include "Texture.h"
 
 int WIDTH = 800;
 int HEIGHT = 800;
@@ -72,36 +73,10 @@ int main(int argc, char* argv[])
     // Getting ID of scale uniform variable, to access it's value
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
-    // Texture
-    int widthImg, heightImg, numColCh;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("UkraineTexture.jpg", &widthImg, &heightImg, &numColCh, 0);
-
-    GLuint textures;
-    glGenTextures(1, &textures);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textures);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // float flatColor[] = {1,1,1,1};
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthImg, heightImg, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    stbi_image_free(bytes);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    GLuint tex0Uni = glGetUniformLocation(shaderProgram.ID, "tex0");
-    shaderProgram.Activate();
-
-    // 0 - texture slot (GL_TEXTURE0)
-    glUniform1i(tex0Uni, 0);
+    // Loading Texture
+    Texture ukraineFlagTex("UkraineTexture.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    ukraineFlagTex.SetTexUni(shaderProgram, "tex0", GL_TEXTURE0);
+   
 
     while (!glfwWindowShouldClose(window)) {
         // Specify the color of the backgroound
@@ -112,8 +87,8 @@ int main(int argc, char* argv[])
         shaderProgram.Activate();
         // Setting scale to 0.5f
         glUniform1f(uniID, 0.5f);
-        glBindTexture(GL_TEXTURE_2D, textures);
-
+        // Binding texture to render
+        ukraineFlagTex.Bind();
         // Bind the VAO so OpenGL knows to use it
         VAO1.Bind();
         // Draw the triangle using GL_TRIANGLES primitive
@@ -127,7 +102,7 @@ int main(int argc, char* argv[])
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
-    glDeleteTextures(1, &textures);
+    ukraineFlagTex.Delete();
     shaderProgram.Delete();
 
     glfwDestroyWindow(window);
