@@ -34,12 +34,12 @@ int main(int argc, char* argv[])
     glViewport(0, 0, WIDTH, HEIGHT);
 
     GLfloat verticies[] = {
-        -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
-        0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
-        0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // Upper corner
-        -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner left
-        0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner right
-        0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // Inner down
+       -0.5f,   -0.5f   *   float(sqrt(3)) / 3,         0.0f,     0.8f,   0.3f,   0.02f,    // Lower left corner
+        0.5f,   -0.5f   *   float(sqrt(3)) / 3,         0.0f,     0.8f,   0.3f,   0.02f,    // Lower right corner
+        0.0f,    0.5f   *   float(sqrt(3)) * 2 / 3,     0.0f,     1.0f,   0.6f,   0.32f,    // Upper corner
+       -0.25f,   0.5f   *   float(sqrt(3)) / 6,         0.0f,     0.9f,   0.45f,  0.17f,    // Inner left
+        0.25f,   0.5f   *   float(sqrt(3)) / 6,         0.0f,     0.9f,   0.45f,  0.17f,    // Inner right
+        0.0f,   -0.5f   *   float(sqrt(3)) / 3,         0.0f,     0.8f,   0.3f,   0.02f     // Inner down
     };
 
     GLuint indicies[] = {
@@ -53,17 +53,20 @@ int main(int argc, char* argv[])
     VAO VAO1;
     VAO1.Bind();
 
+    // Generating Vertex Buffer and Element Buffer objects
     VBO VBO1(verticies, sizeof(verticies));
     EBO EBO1(indicies, sizeof(indicies));
 
-    VAO1.LinkVBO(VBO1, 0);
+    // Linking VBO to VAO
+
+    // Linking vertex shader position attributes
+    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+    // Linking vertex shader color attributes. Applying read offset to get color data from VBO
+    VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();
-
-    glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glfwSwapBuffers(window);
 
     while (!glfwWindowShouldClose(window)) {
         // Specify the color of the backgroound

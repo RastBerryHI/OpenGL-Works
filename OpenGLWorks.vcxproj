@@ -159,7 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EBO.cpp" />
-    <ClCompile Include="OpenGLWorks.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="ShaderClass.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
