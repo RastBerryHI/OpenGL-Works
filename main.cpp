@@ -12,6 +12,7 @@
 #include "EBO.h"
 #include "VAO.h"
 #include "Texture.h"
+#include "Camera.h"
 
 const int WIDTH = 800;
 const int HEIGHT = 800;
@@ -76,46 +77,27 @@ int main(int argc, char* argv[])
     EBO1.Unbind();
 
     // Loading Texture
-    Texture ukraineFlagTex("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    ukraineFlagTex.SetTexUni(shaderProgram, "tex0", GL_TEXTURE0);
-   
-    float rotation = 0.0f;
-    double prevTime = glfwGetTime();
+    Texture brickTexture("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    brickTexture.SetTexUni(shaderProgram, "tex0", GL_TEXTURE0);
+
+    // Enable depth buffer
+    glEnable(GL_DEPTH_TEST);
+
+    Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 
     while (!glfwWindowShouldClose(window)) {
         // Specify the color of the backgroound
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-        // Clean back buffer and assign new color to it
-        glClear(GL_COLOR_BUFFER_BIT);
+        // Clean color and depth in back buffer and assign new data to it
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Tell OpenGL which Shader Program we want to use
         shaderProgram.Activate();
 
-        double crntTime = glfwGetTime();
-        if (crntTime - prevTime >= 1 / 60) {
-            rotation += 0.5f;
-            prevTime = crntTime;
-        }
-
-        glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 proj = glm::mat4(1.0f);
-
-        int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
-        int viewLoc = glGetUniformLocation(shaderProgram.ID, "view");
-        int projlLoc = glGetUniformLocation(shaderProgram.ID, "proj");        
-
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        // Move whole world in derection of vec3
-        view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
-        // Bounds of closest and farest point can be seen
-        proj = glm::perspective(glm::radians(45.f), (float)(WIDTH / HEIGHT), 0.1f, 100.f);
-
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projlLoc, 1, GL_FALSE, glm::value_ptr(proj));
+        camera.Inputs(window);
+        camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 
         // Binding texture to render
-        ukraineFlagTex.Bind();
+        brickTexture.Bind();
         // Bind the VAO so OpenGL knows to use it
         VAO1.Bind();
         // Draw the triangle using GL_TRIANGLES primitive
@@ -129,7 +111,7 @@ int main(int argc, char* argv[])
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
-    ukraineFlagTex.Delete();
+    brickTexture.Delete();
     shaderProgram.Delete();
 
     glfwDestroyWindow(window);
