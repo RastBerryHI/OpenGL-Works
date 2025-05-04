@@ -36,10 +36,10 @@ int main(int argc, char* argv[])
 
     GLfloat verticies[] = {
     /*      [COORDINATES]           [COLORS]                       */
-       -0.5f,  -0.5f,   0.0f,   1.0f, 0.0f, 0.0f,  0.0f,   0.0f,   // Lower left corner
-       -0.5f,   0.5f,   0.0f,   0.0f, 1.0f, 0.0f,  0.0f,   1.0f,   // Lower right corner
-        0.5f,   0.5f,   0.0f,   0.0f, 0.0f, 1.0f,  1.0f,   1.0f,   // Upper corner
-        0.5f,  -0.5f,   0.0f,   1.0f, 1.0f, 1.0f,  1.0f,   0.0f,   // Inner down
+       -0.5f,  -0.5f,   0.0f,   1.0f, 0.0f, 0.0f,       0.0f,  0.0f,   // Lower left corner
+       -0.5f,   0.5f,   0.0f,   0.0f, 1.0f, 0.0f,       0.0f,  1.0f,   // Upper left corner
+        0.5f,   0.5f,   0.0f,   0.0f, 0.0f, 1.0f,       1.0f,  1.0f,   // Upper right corner
+        0.5f,  -0.5f,   0.0f,   1.0f, 1.0f, 1.0f,       1.0f,  0.0f,   // Lower left corner
     };
 
     GLuint indicies[] = {
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     // Linking vertex shader color attributes. Applying read offset to get color data from VBO
     VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     // Linking vertex shader texture attributes. Applying read offset to get texture data from VBO
-    VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
     VAO1.Unbind();
     VBO1.Unbind();
