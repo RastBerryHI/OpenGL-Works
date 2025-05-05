@@ -14,8 +14,13 @@
 #include "Texture.h"
 #include "Camera.h"
 
-const int WIDTH = 800;
-const int HEIGHT = 800;
+int WIDTH = 800;
+int HEIGHT = 800;
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
 
 int main(int argc, char* argv[])
 {
@@ -31,10 +36,13 @@ int main(int argc, char* argv[])
         glfwTerminate();
         return -1;
     }
-
+    
     glfwMakeContextCurrent(window);
     gladLoadGL();
+
     glViewport(0, 0, WIDTH, HEIGHT);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
 
     GLfloat verticies[] = {
     /*      [COORDINATES]           [COLORS]         [TEXTURE COORDINATS]       */
@@ -84,6 +92,15 @@ int main(int argc, char* argv[])
     glEnable(GL_DEPTH_TEST);
 
     Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* win, int width, int height)
+        {
+            Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(win));
+            if (cam)
+            {
+                cam->UpdateWindowProps(win, width, height);
+            }
+        });
 
     while (!glfwWindowShouldClose(window)) {
         // Specify the color of the backgroound

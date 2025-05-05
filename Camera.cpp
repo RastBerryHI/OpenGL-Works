@@ -1,6 +1,6 @@
 
-#include "Camera.h"
 #include "ShaderClass.h"
+#include "Camera.h"
 
 Camera::Camera(int width, int height, glm::vec3 position)
 {
@@ -82,5 +82,16 @@ void Camera::Inputs(GLFWwindow* window)
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		firstClick = true;
 	}
+}
+
+void Camera::UpdateWindowProps(GLFWwindow* window, int width, int height)
+{
+	if (!window) {
+		std::cout << "(!) window is NULL in Camera::UpdateWindowProps" << std::endl;
+		throw(errno);
+	}
+
+	Camera::width = width;
+	Camera::height = height;
 }
 
