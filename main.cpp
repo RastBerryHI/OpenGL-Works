@@ -1,65 +1,98 @@
 
-#include <iostream>
+#include"Mesh.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <stb_image.h>
-#include <vector>
+int WIDTH = 800;
+int HEIGHT = 800;
+
+// Vertices coordinates
+Vertex vertices[] =
+{ //               COORDINATES           /            COLORS          /           NORMALS         /       TEXTURE COORDINATES    //
+    {glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+    Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+    Vertex{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+    Vertex{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
+};
 
 
-#include "ShaderClass.h"
-#include "VBO.h"
-#include "EBO.h"
-#include "VAO.h"
-#include "Texture.h"
-#include "Camera.h"
+// Indices for vertices order
+GLuint indices[] =
+{
+    0, 1, 2,
+    0, 2, 3
+};
+
+Vertex lightVertices[] =
+{ //     COORDINATES     //
+    Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
+    Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
+    Vertex{glm::vec3(0.1f, -0.1f, -0.1f)},
+    Vertex{glm::vec3(0.1f, -0.1f,  0.1f)},
+    Vertex{glm::vec3(-0.1f,  0.1f,  0.1f)},
+    Vertex{glm::vec3(-0.1f,  0.1f, -0.1f)},
+    Vertex{glm::vec3(0.1f,  0.1f, -0.1f)},
+    Vertex{glm::vec3(0.1f,  0.1f,  0.1f)}
+};
+
+
+GLuint lightIndices[] =
+{
+    0, 1, 2,
+    0, 2, 3,
+    0, 4, 7,
+    0, 7, 3,
+    3, 7, 6,
+    3, 6, 2,
+    2, 6, 5,
+    2, 5, 1,
+    1, 5, 4,
+    1, 4, 0,
+    4, 5, 6,
+    4, 6, 7
+};
+
 
 struct LightControl {
     float* outerCone;
     float* innerCone;
 };
 
-int WIDTH = 800;
-int HEIGHT = 800;
-
-void global_terminate(GLFWwindow* window, const std::vector<VAO>& vaoObjects, const std::vector<VBO>& vboObjects, const std::vector<EBO>& eboObjects, const std::vector<Texture>& textures, const std::vector <Shader>& shaders)
-{
-    for (VAO vao : vaoObjects) {
-        vao.Delete();
-    }
-
-    for (VBO vbo : vboObjects) {
-        vbo.Delete();
-    }
-
-    for (EBO ebo : eboObjects) {
-        ebo.Delete();
-    }
-
-    for (Texture tex : textures) {
-        tex.Delete();
-    }
-
-    for (Shader shader : shaders) {
-        shader.Delete();
-    }
-
-    /*VAO1.Delete();
-    VBO1.Delete();
-    EBO1.Delete();
-
-    lightVAO.Delete();
-    lightVBO.Delete();
-    lightEBO.Delete();
-
-    brickTexture.Delete();
-    shaderProgram.Delete();*/
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-}
+//
+//void global_terminate(GLFWwindow* window, const std::vector<VAO>& vaoObjects, const std::vector<VBO>& vboObjects, const std::vector<EBO>& eboObjects, const std::vector<Texture>& textures, const std::vector <Shader>& shaders)
+//{
+//    for (VAO vao : vaoObjects) {
+//        vao.Delete();
+//    }
+//
+//    for (VBO vbo : vboObjects) {
+//        vbo.Delete();
+//    }
+//
+//    for (EBO ebo : eboObjects) {
+//        ebo.Delete();
+//    }
+//
+//    for (Texture tex : textures) {
+//        tex.Delete();
+//    }
+//
+//    for (Shader shader : shaders) {
+//        shader.Delete();
+//    }
+//
+//    /*VAO1.Delete();
+//    VBO1.Delete();
+//    EBO1.Delete();
+//
+//    lightVAO.Delete();
+//    lightVBO.Delete();
+//    lightEBO.Delete();
+//
+//    brickTexture.Delete();
+//    shaderProgram.Delete();*/
+//
+//    glfwDestroyWindow(window);
+//    glfwTerminate();
+//}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -134,90 +167,29 @@ int main(int argc, char* argv[])
     glViewport(0, 0, WIDTH, HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-
-    // Vertices coordinates
-    GLfloat vertices[] =
-    { //     COORDINATES     /        COLORS        /    TexCoord    /       NORMALS     //
-        -1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 0.0f,		0.0f, 1.0f, 0.0f,
-        -1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-         1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
-         1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 0.0f,		0.0f, 1.0f, 0.0f
-    };
-
-    // Indices for vertices order
-    GLuint indices[] =
-    {
-        0, 1, 2,
-        0, 2, 3
-    };
-
-    GLfloat lightVertices[] =
-    { //     COORDINATES     //
-        -0.1f, -0.1f,  0.1f,
-        -0.1f, -0.1f, -0.1f,
-         0.1f, -0.1f, -0.1f,
-         0.1f, -0.1f,  0.1f,
-        -0.1f,  0.1f,  0.1f,
-        -0.1f,  0.1f, -0.1f,
-         0.1f,  0.1f, -0.1f,
-         0.1f,  0.1f,  0.1f
-    };
-
-    GLuint lightIndices[] =
-    {
-        0, 1, 2,
-        0, 2, 3,
-        0, 4, 7,
-        0, 7, 3,
-        3, 7, 6,
-        3, 6, 2,
-        2, 6, 5,
-        2, 5, 1,
-        1, 5, 4,
-        1, 4, 0,
-        4, 5, 6,
-        4, 6, 7
+    Texture textures[] = {
+        Texture("planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+        Texture("planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
     };
 
     Shader shaderProgram("default.vert", "default.frag");    
+    // Correcting initialization of indices and textures
+    std::vector<Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));  // Initialize vertices properly
+    std::vector<GLuint> inds(indices, indices + sizeof(indices) / sizeof(GLuint));  // Initialize indices properly
+    std::vector<Texture> texs = {
+        Texture("planks.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+        Texture("planksSpec.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
+    };  // Initialize textures properly
 
-    VAO VAO1;
-    VAO1.Bind();
-
-    // Generating Vertex Buffer and Element Buffer objects
-    VBO VBO1(vertices, sizeof(vertices));
-    EBO EBO1(indices, sizeof(indices));
-
-    // Linking VBO to VAO
-
-    // Linking vertex shader position attributes
-    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 11 * sizeof(float), (void*)0);
-    // Linking vertex shader color attributes. Applying read offset to get color data from VBO
-    VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-    // Linking vertex shader texture attributes. Applying read offset to get texture data from VBO
-    VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 11 * sizeof(float), (void*)(6 * sizeof(float)));
-    VAO1.LinkAttrib(VBO1, 3, 3, GL_FLOAT, 11 * sizeof(float), (void*)(8 * sizeof(float)));
-
-    VAO1.Unbind();
-    VBO1.Unbind();
-    EBO1.Unbind();
+    Mesh floor(verts, inds, texs);  // Create the floor mesh
 
     Shader lightShader("light.vert", "light.frag");
+    std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
+    std::vector<GLuint> lightInds(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
+    Mesh light(lightVerts, lightInds, texs);
 
-    VAO lightVAO;
-    lightVAO.Bind();
-
-    VBO lightVBO(lightVertices, sizeof(lightVertices));
-    EBO lightEBO(lightIndices, sizeof(lightIndices));
-
-    lightVAO.LinkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-
-    lightVAO.Unbind();
-    lightVBO.Unbind();
-    lightEBO.Unbind();
 
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    
     glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
     glm::mat4 lightModel = glm::mat4(1.0f);
     lightModel = glm::translate(lightModel, lightPos);
@@ -245,34 +217,20 @@ int main(int argc, char* argv[])
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
     glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-    
-    //Texture
-
-    Texture planksTex("planks.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
-    planksTex.SetTexUni(shaderProgram, "tex0", 0);
-
-    // RED channel - specular map has 1 channel
-    Texture planksSpec("planksSpec.png", GL_TEXTURE_2D, 1, GL_RED, GL_UNSIGNED_BYTE);
-    planksSpec.SetTexUni(shaderProgram, "tex1", 1);
-
-
-    Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
-    
-    
-
+   
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
-
-
-
+   
+    Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+    
     glfwSetFramebufferSizeCallback(window, [](GLFWwindow* win, int width, int height)
-        {
-            Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(win));
-            if (cam)
+    {
+        Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(win));
+        if (cam)
             {
-                cam->UpdateWindowProps(win, width, height);
-            }
-        });
+            cam->UpdateWindowProps(win, width, height);
+        }
+    });
 
     while (!glfwWindowShouldClose(window)) {
         // Specify the color of the backgroound
@@ -296,20 +254,8 @@ int main(int argc, char* argv[])
         glUniform1f(glGetUniformLocation(shaderProgram.ID, "outerCone"), spotLightOuterCone);
         glUniform1f(glGetUniformLocation(shaderProgram.ID, "innerCone"), spotLightInnerCone);
 
-        camera.Matrix(shaderProgram, "camMatrix");
-
-        planksTex.Bind();
-        planksSpec.Bind();
-
-        VAO1.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
-
-
-        lightShader.Activate();
-        camera.Matrix(lightShader, "camMatrix");
-        lightVAO.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
-        
+        floor.Draw(shaderProgram, camera);
+        light.Draw(lightShader, camera);
 
         // Swap buffer with the from one
         glfwSwapBuffers(window);
@@ -317,11 +263,13 @@ int main(int argc, char* argv[])
         glfwPollEvents();
     }
 
-    const std::vector<VAO> VAOs = { VAO1, lightVAO };
+    glfwTerminate();
+
+    /*const std::vector<VAO> VAOs = { VAO1, lightVAO };
     const std::vector<VBO> VBOs = { VBO1, lightVBO };
     const std::vector<EBO> EBOs = { EBO1, lightEBO };
     const std::vector <Texture> Textures = { planksTex, planksSpec};
     const std::vector <Shader> Shaders = { shaderProgram, lightShader };
-    global_terminate(window, VAOs, VBOs, EBOs, Textures, Shaders);
+    global_terminate(window, VAOs, VBOs, EBOs, Textures, Shaders);*/
     return 0;
 }
