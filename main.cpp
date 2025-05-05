@@ -62,7 +62,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void utility_inputs(GLFWwindow* window, float& ambientUniform)
+void utility_inputs(GLFWwindow* window, float& ambientUniform, float& specularUniform)
 {
     if (!window) {
         std::cout << "(!) window is NULL in utility_inputs" << std::endl;
@@ -73,11 +73,23 @@ void utility_inputs(GLFWwindow* window, float& ambientUniform)
         glfwDestroyWindow(window);
         exit(0);
     }
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && ambientUniform < 1.0f) {
+
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         ambientUniform+= 0.01f;
+        ambientUniform = glm::clamp(ambientUniform, 0.0f, 1.0f);
     }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && ambientUniform > 0.0f) {
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         ambientUniform -= 0.01f;
+        ambientUniform = glm::clamp(ambientUniform, 0.0f, 1.0f);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        specularUniform += 0.01f;
+        specularUniform = glm::clamp(specularUniform, 0.0f, 1.0f);
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        specularUniform -= 0.01f;
+        specularUniform = glm::clamp(specularUniform, 0.0f, 1.0f);
     }
 }
 
@@ -212,15 +224,19 @@ int main(int argc, char* argv[])
     pyramidModel = glm::translate(pyramidModel, pyramidPos);
     
     float ambient = 0.2f;
+    float specularLight = 0.5f;
     
     lightShader.Activate();
     glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
     glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.x, lightColor.w);
     shaderProgram.Activate();
+    
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
     glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
     glUniform1f(glGetUniformLocation(shaderProgram.ID, "ambient"), ambient);
+    glUniform1f(glGetUniformLocation(shaderProgram.ID, "specularLight"), specularLight);
+
     // Loading Texture
     Texture brickTexture("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     brickTexture.SetTexUni(shaderProgram, "tex0", GL_TEXTURE0);
@@ -245,13 +261,15 @@ int main(int argc, char* argv[])
         // Clean color and depth in back buffer and assign new data to it
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        utility_inputs(window, ambient);
+        utility_inputs(window, ambient, specularLight);
         
         camera.Inputs(window);
         camera.UpdateMatrix(45.0f, 0.1f, 100.0f);
 
         shaderProgram.Activate();
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
         glUniform1f(glGetUniformLocation(shaderProgram.ID, "ambient"), ambient);
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "specularLight"), specularLight);
 
         camera.Matrix(shaderProgram, "camMatrix");
 
@@ -265,7 +283,7 @@ int main(int argc, char* argv[])
         lightVAO.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(lightIndicies) / sizeof(int), GL_UNSIGNED_INT, 0);
         
-        std::cout << ambient << "\n";
+
         // Swap buffer with the from one
         glfwSwapBuffers(window);
         // Take care of all GLFW events
