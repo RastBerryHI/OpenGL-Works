@@ -16,6 +16,10 @@
 #include "Texture.h"
 #include "Camera.h"
 
+struct LightControl {
+    float* outerCone;
+    float* innerCone;
+};
 
 int WIDTH = 800;
 int HEIGHT = 800;
@@ -90,6 +94,22 @@ void utility_inputs(GLFWwindow* window, float& ambientUniform, float& specularUn
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         specularUniform -= 0.01f;
         specularUniform = glm::clamp(specularUniform, 0.0f, 1.0f);
+    }
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    LightControl* control = static_cast<LightControl*>(glfwGetWindowUserPointer(window));
+    if (control && control->outerCone && control->innerCone) {
+        *(control->outerCone) += yoffset * 0.01f; // adjust sensitivity as needed
+        *(control->innerCone) += yoffset * 0.01f;
+
+        // Clamp values between 0.0 and 1.0
+        *(control->outerCone) = glm::clamp(*(control->outerCone), 0.0f, 1.0f);
+        *(control->innerCone) = glm::clamp(*(control->innerCone), 0.0f, 1.0f);
+
+        std::cout << "Outer cone: " << *(control->outerCone)
+            << ", Inner cone: " << *(control->innerCone) << '\n';
     }
 }
 
@@ -208,7 +228,15 @@ int main(int argc, char* argv[])
     
     float ambient = 0.2f;
     float specularLight = 0.5f;
+
+    float spotLightOuterCone = 0.90f;
+    float spotLightInnerCone = 0.95f;
     
+    LightControl lightControl{ &spotLightOuterCone, &spotLightInnerCone };
+
+    glfwSetWindowUserPointer(window, &lightControl);
+    glfwSetScrollCallback(window, scroll_callback);
+
     lightShader.Activate();
     glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
     glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.x, lightColor.w);
@@ -217,9 +245,7 @@ int main(int argc, char* argv[])
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
     glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-    glUniform1f(glGetUniformLocation(shaderProgram.ID, "ambient"), ambient);
-    glUniform1f(glGetUniformLocation(shaderProgram.ID, "specularLight"), specularLight);
-
+    
     //Texture
 
     Texture planksTex("planks.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -263,6 +289,12 @@ int main(int argc, char* argv[])
         glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
         glUniform1f(glGetUniformLocation(shaderProgram.ID, "ambient"), ambient);
         glUniform1f(glGetUniformLocation(shaderProgram.ID, "specularLight"), specularLight);
+
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "ambient"), ambient);
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "specularLight"), specularLight);
+
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "outerCone"), spotLightOuterCone);
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "innerCone"), spotLightInnerCone);
 
         camera.Matrix(shaderProgram, "camMatrix");
 
