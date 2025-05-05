@@ -25,7 +25,7 @@ void Camera::Matrix(Shader& shader, const char* uniform)
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 }
 
-void Camera::Inputs(GLFWwindow* window)
+void Camera::Inputs(GLFWwindow* window, bool isFps)
 {
 	if (!window) {
 		std::cout << "(!) window is NULL in Camera::Inputs" << std::endl;
@@ -58,6 +58,8 @@ void Camera::Inputs(GLFWwindow* window)
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
 		speed = 0.1f;
 	}
+
+	Position.y = isFps ? 0 : Position.y;
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);

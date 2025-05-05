@@ -263,7 +263,7 @@ int main(int argc, char* argv[])
 
         utility_inputs(window, ambient, specularLight);
         
-        camera.Inputs(window);
+        camera.Inputs(window, true);
         camera.UpdateMatrix(45.0f, 0.1f, 100.0f);
 
         shaderProgram.Activate();
