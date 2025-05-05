@@ -63,7 +63,7 @@ void Shader::CompileErrors(GLuint shader, const char* type)
 
 		if (hasCompiled == GL_FALSE) {
 			glGetShaderInfoLog(shader, bufferSize, nullptr, infoLog);
-			std::cout << "(!) SHADER COMPILATION ERROR for: " << type << "\n";
+			std::cout << "(!) SHADER COMPILATION ERROR for: " << type << "\n" << "Info Log: " << infoLog << "\n";
 		}
 	}
 	else {
@@ -71,7 +71,7 @@ void Shader::CompileErrors(GLuint shader, const char* type)
 
 		if (hasCompiled == GL_FALSE) {
 			glGetProgramInfoLog(shader, bufferSize, nullptr, infoLog);
-			std::cout << "(!) SHADER LINKING ERROR for: " << type << "\n";
+			std::cout << "(!) SHADER LINKING ERROR for: " << type << "\n" << "Info Log: " << infoLog << "\n";
 		}
 	}
 }

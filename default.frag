@@ -17,10 +17,16 @@ uniform vec3 camPos;
 uniform float ambient;
 uniform float specularLight;
 
-void main()
+vec4 pointLight()
 {
+	vec3 lightVec = lightPos - crntPos;
+	float dist = length(lightVec);
+	float a = 0.05;
+	float b = 0.01;
+	float intern = 1.0f / (a * dist * dist + b * dist + 1.0f);
+
 	vec3 normal = normalize(Normal);
-	vec3 lightDirection = normalize(lightPos - crntPos);
+	vec3 lightDirection = normalize(lightVec);
 
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
@@ -29,5 +35,26 @@ void main()
 	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
-	FragColor = texture(tex0, texCoord) * lightColor * (diffuse + ambient) + texture(tex1, texCoord).r * specular;
+	return (texture(tex0, texCoord) * (diffuse * intern + ambient) + texture(tex1, texCoord).r * specular * intern) * lightColor;
+}
+
+vec4 directLight()
+{
+	vec3 normal = normalize(Normal);
+	vec3 lightDirection = normalize(vec3(1.0f, 1.0f, 0.0f));
+
+	float diffuse = max(dot(normal, lightDirection), 0.0f);
+
+	vec3 viewDirection = normalize(camPos - crntPos);
+	vec3 reflectionDirection = reflect(-lightDirection, normal);
+	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
+	float specular = specAmount * specularLight;
+
+	return (texture(tex0, texCoord) * (diffuse + ambient) + texture(tex1, texCoord).r * specular) * lightColor;
+
+}
+
+void main()
+{
+	FragColor = directLight();
 }
