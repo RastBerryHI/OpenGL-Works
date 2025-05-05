@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
+#include <vector>
+
 
 #include "ShaderClass.h"
 #include "VBO.h"
@@ -14,12 +16,69 @@
 #include "Texture.h"
 #include "Camera.h"
 
+
 int WIDTH = 800;
 int HEIGHT = 800;
+
+void global_terminate(GLFWwindow* window, const std::vector<VAO>& vaoObjects, const std::vector<VBO>& vboObjects, const std::vector<EBO>& eboObjects, const std::vector<Texture>& textures, const std::vector <Shader>& shaders)
+{
+    for (VAO vao : vaoObjects) {
+        vao.Delete();
+    }
+
+    for (VBO vbo : vboObjects) {
+        vbo.Delete();
+    }
+
+    for (EBO ebo : eboObjects) {
+        ebo.Delete();
+    }
+
+    for (Texture tex : textures) {
+        tex.Delete();
+    }
+
+    for (Shader shader : shaders) {
+        shader.Delete();
+    }
+
+    /*VAO1.Delete();
+    VBO1.Delete();
+    EBO1.Delete();
+
+    lightVAO.Delete();
+    lightVBO.Delete();
+    lightEBO.Delete();
+
+    brickTexture.Delete();
+    shaderProgram.Delete();*/
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+}
+
+void utility_inputs(GLFWwindow* window, float& ambientUniform)
+{
+    if (!window) {
+        std::cout << "(!) window is NULL in utility_inputs" << std::endl;
+        throw(errno);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwDestroyWindow(window);
+        exit(0);
+    }
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && ambientUniform < 1.0f) {
+        ambientUniform+= 0.01f;
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && ambientUniform > 0.0f) {
+        ambientUniform -= 0.01f;
+    }
 }
 
 int main(int argc, char* argv[])
@@ -152,6 +211,7 @@ int main(int argc, char* argv[])
     glm::mat4 pyramidModel = glm::mat4(1.0f);
     pyramidModel = glm::translate(pyramidModel, pyramidPos);
     
+    float ambient = 0.2f;
     
     lightShader.Activate();
     glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
@@ -160,7 +220,7 @@ int main(int argc, char* argv[])
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
     glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-
+    glUniform1f(glGetUniformLocation(shaderProgram.ID, "ambient"), ambient);
     // Loading Texture
     Texture brickTexture("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     brickTexture.SetTexUni(shaderProgram, "tex0", GL_TEXTURE0);
@@ -185,11 +245,14 @@ int main(int argc, char* argv[])
         // Clean color and depth in back buffer and assign new data to it
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+        utility_inputs(window, ambient);
+        
         camera.Inputs(window);
         camera.UpdateMatrix(45.0f, 0.1f, 100.0f);
 
         shaderProgram.Activate();
+        glUniform1f(glGetUniformLocation(shaderProgram.ID, "ambient"), ambient);
+
         camera.Matrix(shaderProgram, "camMatrix");
 
         brickTexture.Bind();
@@ -202,26 +265,18 @@ int main(int argc, char* argv[])
         lightVAO.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(lightIndicies) / sizeof(int), GL_UNSIGNED_INT, 0);
         
-        
-        
+        std::cout << ambient << "\n";
         // Swap buffer with the from one
         glfwSwapBuffers(window);
         // Take care of all GLFW events
         glfwPollEvents();
     }
 
-    VAO1.Delete();
-    VBO1.Delete();
-    EBO1.Delete();
-
-    lightVAO.Delete();
-    lightVBO.Delete();
-    lightEBO.Delete();
-
-    brickTexture.Delete();
-    shaderProgram.Delete();
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    const std::vector<VAO> VAOs = { VAO1, lightVAO };
+    const std::vector<VBO> VBOs = { VBO1, lightVBO };
+    const std::vector<EBO> EBOs = { EBO1, lightEBO };
+    const std::vector <Texture> Textures = { brickTexture };
+    const std::vector <Shader> Shaders = { shaderProgram, lightShader };
+    global_terminate(window, VAOs, VBOs, EBOs, Textures, Shaders);
     return 0;
 }
