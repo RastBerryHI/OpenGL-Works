@@ -263,13 +263,13 @@ int main(int argc, char* argv[])
         glfwPollEvents();
     }
 
+    // Delete all the objects we've created
+    shaderProgram.Delete();
+    lightShader.Delete();
+    // Delete window before ending the program
+    glfwDestroyWindow(window);
+    // Terminate GLFW before ending the program
     glfwTerminate();
 
-    /*const std::vector<VAO> VAOs = { VAO1, lightVAO };
-    const std::vector<VBO> VBOs = { VBO1, lightVBO };
-    const std::vector<EBO> EBOs = { EBO1, lightEBO };
-    const std::vector <Texture> Textures = { planksTex, planksSpec};
-    const std::vector <Shader> Shaders = { shaderProgram, lightShader };
-    global_terminate(window, VAOs, VBOs, EBOs, Textures, Shaders);*/
     return 0;
 }
