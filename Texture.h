@@ -8,16 +8,20 @@ class Shader;
 
 class Texture
 {
-public:
-	GLuint ID;
 	GLenum type;
+	GLuint ID;
+	GLuint textureSlot;
 
-	Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
+public:
+	Texture(const char* image, GLenum texType, GLuint slot, GLenum format, GLenum pixelType);
 
 	void SetTexUni(Shader& shader, const char* uniform, GLuint unit);
 	void Bind();
 	void Unbind();
 	void Delete();
+
+	GLuint GetID() const;
+	GLuint GetSlot() const;
 };
 
 #endif

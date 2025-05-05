@@ -115,53 +115,36 @@ int main(int argc, char* argv[])
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 
+    // Vertices coordinates
     GLfloat vertices[] =
-    { //     COORDINATES     /        COLORS          /    TexCoord   /        NORMALS       //
-        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-         0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 5.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-         0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, -1.0f, 0.0f, // Bottom side
-
-        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-         0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,     -0.8f, 0.5f,  0.0f, // Left Side
-
-        -0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-         0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-         0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f, -0.8f, // Non-facing side
-
-         0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
-         0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f, // Right side
-         0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.8f, 0.5f,  0.0f, // Right side
-
-         0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-        -0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f, // Facing side
-         0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f  // Facing side
-    };
-
-    GLfloat lightVerticies[] = {
-        -0.1f, -0.1f, 0.1f,
-        -0.1f, -0.1f,-0.1f,
-         0.1f, -0.1f,-0.1f,
-         0.1f, -0.1f, 0.1f,
-        -0.1f,  0.1f, 0.1f,
-        -0.1f,  0.1f,-0.1f,
-         0.1f,  0.1f,-0.1f,
-         0.1f,  0.1f, 0.1f
+    { //     COORDINATES     /        COLORS        /    TexCoord    /       NORMALS     //
+        -1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 0.0f,		0.0f, 1.0f, 0.0f,
+        -1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		0.0f, 1.0f,		0.0f, 1.0f, 0.0f,
+         1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 1.0f,		0.0f, 1.0f, 0.0f,
+         1.0f, 0.0f,  1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 0.0f,		0.0f, 1.0f, 0.0f
     };
 
     // Indices for vertices order
     GLuint indices[] =
     {
-        0, 1, 2, // Bottom side
-        0, 2, 3, // Bottom side
-        4, 6, 5, // Left side
-        7, 9, 8, // Non-facing side
-        10, 12, 11, // Right side
-        13, 15, 14 // Facing side
+        0, 1, 2,
+        0, 2, 3
     };
 
-    GLuint lightIndicies[] = {
+    GLfloat lightVertices[] =
+    { //     COORDINATES     //
+        -0.1f, -0.1f,  0.1f,
+        -0.1f, -0.1f, -0.1f,
+         0.1f, -0.1f, -0.1f,
+         0.1f, -0.1f,  0.1f,
+        -0.1f,  0.1f,  0.1f,
+        -0.1f,  0.1f, -0.1f,
+         0.1f,  0.1f, -0.1f,
+         0.1f,  0.1f,  0.1f
+    };
+
+    GLuint lightIndices[] =
+    {
         0, 1, 2,
         0, 2, 3,
         0, 4, 7,
@@ -173,7 +156,7 @@ int main(int argc, char* argv[])
         1, 5, 4,
         1, 4, 0,
         4, 5, 6,
-        4, 6, 7,
+        4, 6, 7
     };
 
     Shader shaderProgram("default.vert", "default.frag");    
@@ -204,8 +187,8 @@ int main(int argc, char* argv[])
     VAO lightVAO;
     lightVAO.Bind();
 
-    VBO lightVBO(lightVerticies, sizeof(lightVerticies));
-    EBO lightEBO(lightIndicies, sizeof(lightIndicies));
+    VBO lightVBO(lightVertices, sizeof(lightVertices));
+    EBO lightEBO(lightIndices, sizeof(lightIndices));
 
     lightVAO.LinkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
 
@@ -237,14 +220,24 @@ int main(int argc, char* argv[])
     glUniform1f(glGetUniformLocation(shaderProgram.ID, "ambient"), ambient);
     glUniform1f(glGetUniformLocation(shaderProgram.ID, "specularLight"), specularLight);
 
-    // Loading Texture
-    Texture brickTexture("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    brickTexture.SetTexUni(shaderProgram, "tex0", GL_TEXTURE0);
+    //Texture
+
+    Texture planksTex("planks.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
+    planksTex.SetTexUni(shaderProgram, "tex0", 0);
+
+    // RED channel - specular map has 1 channel
+    Texture planksSpec("planksSpec.png", GL_TEXTURE_2D, 1, GL_RED, GL_UNSIGNED_BYTE);
+    planksSpec.SetTexUni(shaderProgram, "tex1", 1);
+
+
+    Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+    
+    
 
     // Enable depth buffer
     glEnable(GL_DEPTH_TEST);
 
-    Camera camera(WIDTH, HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+
 
     glfwSetFramebufferSizeCallback(window, [](GLFWwindow* win, int width, int height)
         {
@@ -263,7 +256,7 @@ int main(int argc, char* argv[])
 
         utility_inputs(window, ambient, specularLight);
         
-        camera.Inputs(window, true);
+        camera.Inputs(window, false);
         camera.UpdateMatrix(45.0f, 0.1f, 100.0f);
 
         shaderProgram.Activate();
@@ -273,7 +266,9 @@ int main(int argc, char* argv[])
 
         camera.Matrix(shaderProgram, "camMatrix");
 
-        brickTexture.Bind();
+        planksTex.Bind();
+        planksSpec.Bind();
+
         VAO1.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
@@ -281,7 +276,7 @@ int main(int argc, char* argv[])
         lightShader.Activate();
         camera.Matrix(lightShader, "camMatrix");
         lightVAO.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(lightIndicies) / sizeof(int), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
         
 
         // Swap buffer with the from one
@@ -293,7 +288,7 @@ int main(int argc, char* argv[])
     const std::vector<VAO> VAOs = { VAO1, lightVAO };
     const std::vector<VBO> VBOs = { VBO1, lightVBO };
     const std::vector<EBO> EBOs = { EBO1, lightEBO };
-    const std::vector <Texture> Textures = { brickTexture };
+    const std::vector <Texture> Textures = { planksTex, planksSpec};
     const std::vector <Shader> Shaders = { shaderProgram, lightShader };
     global_terminate(window, VAOs, VBOs, EBOs, Textures, Shaders);
     return 0;

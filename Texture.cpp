@@ -2,7 +2,7 @@
 #include "Texture.h"
 #include "ShaderClass.h"
 
-Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
+Texture::Texture(const char* image, GLenum texType, GLuint slot, GLenum format, GLenum pixelType)
 {
     type = texType;
 
@@ -11,7 +11,8 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
     unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
 
     glGenTextures(1, &ID);
-    glActiveTexture(slot);
+    glActiveTexture(GL_TEXTURE + slot);
+    textureSlot = slot;
     glBindTexture(type, ID);
 
     glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -41,6 +42,7 @@ void Texture::SetTexUni(Shader& shader, const char* uniform, GLuint unit)
 
 void Texture::Bind()
 {
+    glActiveTexture(GL_TEXTURE0 + textureSlot);
     glBindTexture(type, ID);
 }
 
@@ -52,4 +54,14 @@ void Texture::Unbind()
 void Texture::Delete()
 {
     glDeleteTextures(1, &ID);
+}
+
+GLuint Texture::GetID() const
+{
+    return ID;
+}
+
+GLuint Texture::GetSlot() const
+{
+    return textureSlot;
 }
