@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\Libraries\glfw3_x64-windows\include;$(ProjectDir)\Libraries\glew_x64-windows\include;$(ProjectDir)\Libraries\freeglut_x64-windows\include;$(ProjectDir)\Libraries\glad_x64-windows\include;$(ProjectDir)\Libraries\egl-registry_x64-windows\include;$(ProjectDir)\Libraries\stb\include;$(ProjectDir)\Libraries\glm_x64-windows\include</IncludePath>
+    <IncludePath>$(ProjectDir)\Libraries\glfw3_x64-windows\include;$(ProjectDir)\Libraries\glew_x64-windows\include;$(ProjectDir)\Libraries\freeglut_x64-windows\include;$(ProjectDir)\Libraries\glad_x64-windows\include;$(ProjectDir)\Libraries\egl-registry_x64-windows\include;$(ProjectDir)\Libraries\stb\include;$(ProjectDir)\Libraries\glm_x64-windows\include;$(ProjectDir)\Libraries\nlohmann\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -162,6 +162,7 @@
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="ShaderClass.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="ShaderClass.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VAO.h" />
